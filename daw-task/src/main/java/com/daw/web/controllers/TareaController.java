@@ -88,7 +88,6 @@ public class TareaController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
 		}
 	}
-<<<<<<< HEAD
 	
 	/*@PutMapping("/{idtarea}/completar")
 	public ResponseEntity<?> completar(@PathVariable long idTarea){
@@ -155,74 +154,5 @@ public class TareaController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
 		}
 	}	*/
-=======
->>>>>>> 8d16ff78e7a122e23b6bc116e5026d5662eb412f
-
-	@PutMapping("/{idtarea}/completar")
-	public ResponseEntity<?> completar(@PathVariable long idTarea){
-		try{
-			return ResponseEntity.ok(this.tareaService.completar(idTarea));
-		}
-		catch(TareaNotFoundException ex) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-		}
-		catch(TareaException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-		}
-	}
-
-	@GetMapping("/tareas/pendientes")
-	public ResponseEntity<?> pendiente(){
-		try{
-			return ResponseEntity.ok(this.tareaService.obtenerpendientes());
-		}
-		catch(TareaException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-		}
-	}
-
-	@GetMapping("/tareas/en_progreso")
-	public ResponseEntity<?> proceso(){
-
-		try{
-			return ResponseEntity.ok(this.tareaService.obtenerenproceso());
-		}
-		catch(TareaException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-		}
-	}
-
-	@GetMapping("/tareas/vencidas")
-	public ResponseEntity<?> obtenervencidas(){
-		try{
-			return ResponseEntity.ok(this.tareaService.obtenervencidas());
-		}
-		catch(TareaException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-		}
-	}
-
-	@GetMapping("/tareas/no_vencidas")
-	public ResponseEntity<?> obtenernovencidas(){
-
-		try{
-			return ResponseEntity.ok(this.tareaService.obtenernovencidas());
-		}
-		catch(TareaException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-		}
-	}	
-
-	@GetMapping("/titulo")
-	public ResponseEntity<?> titulo(){
-
-		try{
-			return ResponseEntity.ok(this.tareaService.titulo());
-		}
-		catch(TareaException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-		}
-	}	
-	
 
 }
