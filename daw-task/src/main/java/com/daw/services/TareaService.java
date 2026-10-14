@@ -102,5 +102,35 @@ public class TareaService {
 		return this.tareaRepository.findByFechaVencimientoBefore(LocalDate.now());
 	}
 	
+	public TareaEntity completar(long idTarea) {
+		TareaEntity tarea = tareaRepository.findById(idTarea)
+				.orElseThrow(() -> new TareaNotFoundException("No se encontró ninguna tarea con ID "+ idTarea));
+		
+		tarea.setEstado(Estado.COMPLETADA);
+		
+		return tareaRepository.save(tarea);
+	}
+	
+	public List<TareaEntity> obtenerpendientes(){
+		return tareaRepository.findByEstado(Estado.PENDIENTE);
+	}
+	
+	public List<TareaEntity> obtenerenproceso(){
+		return tareaRepository.findByEstado(Estado.EN_PROGRESO);
+	}
+	
+	public List<TareaEntity> obtenervencidas(){
+		return tareaRepository.findByFechaVencimientoFalse();
+	}
+	 
+	public List<TareaEntity> obtenernovencidas(){
+		return tareaRepository.findByFechaVencimientoFalse();
+	}
+	
+	public List<TareaEntity> titulo(){
+		return tareaRepository.findAll();
+	}
+	
+	
 	
 }

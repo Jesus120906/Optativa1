@@ -89,7 +89,7 @@ public class TareaController {
 		}
 	}
 	
-	/*@PutMapping("/{idtarea}/completar")
+	@PutMapping("/{idtarea}/completar")
 	public ResponseEntity<?> completar(@PathVariable long idTarea){
 		try{
 			return ResponseEntity.ok(this.tareaService.completar(idTarea));
@@ -153,6 +153,6 @@ public class TareaController {
 		catch(TareaException ex) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
 		}
-	}	*/
+	}	
 
 }
