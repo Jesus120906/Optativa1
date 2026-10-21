@@ -1,12 +1,7 @@
 /**
  * Módulo de Presentación DOM (js/ui.js)
- * FUNCIONES AUXILIARES REUTILIZABLES - NO SUELE TOCARSE
- *
- * Instrucciones:
- * - Adapta renderTabla() para que pinte las columnas de tu entidad
- * - openModalDetalle() muestra todos los campos del registro seleccionado
- * - openModalForm() gestiona tanto el modo Crear (null) como el modo Editar (objeto)
- * - El resto de funciones son genéricas y no es necesario modificarlas
+ * Adaptado a la entidad Pokemon:
+ *   id, numeroPokedex, nombre, tipo1, tipo2, fechaCaptura, capturado
  */
 
 export const UIService = {
@@ -35,9 +30,8 @@ export const UIService = {
     },
 
     /**
-     * [ALUMNO] Adaptar el map() para pintar las columnas de tu entidad.
-     * Regla: una celda <td> por campo. Sin HTML anidado en la celda.
-     * Los campos de texto largo (descripcion, etc.) NO se muestran en tabla.
+     * Una celda <td> por columna de la cabecera (8 en total).
+     * Sin HTML anidado en las celdas de datos.
      */
     renderTabla(items) {
         if (this.elements.loadingState) this.elements.loadingState.classList.add('hidden');
@@ -52,17 +46,19 @@ export const UIService = {
         if (this.elements.emptyState) this.elements.emptyState.classList.add('hidden');
         if (this.elements.statTotal)  this.elements.statTotal.textContent = items.length;
 
-        this.elements.tbody.innerHTML = items.map(tarea => `
+        this.elements.tbody.innerHTML = items.map(pokemon => `
             <tr>
-                <td><strong>#${tarea.id}</strong></td>
-                <td>${this.escapeHTML(tarea.titulo)}</td>
-				<td>${tarea.fechaCreacion}</td>
-				<td>${tarea.fechaVencimiento}</td>
-				<td>${tarea.estado}</td>
+                <td><strong>#${pokemon.id}</strong></td>
+                <td>${pokemon.numeroPokedex}</td>
+                <td>${this.escapeHTML(pokemon.nombre)}</td>
+                <td>${this.escapeHTML(pokemon.tipo1)}</td>
+                <td>${this.escapeHTML(this.formatTipo2(pokemon.tipo2))}</td>
+                <td>${this.formatFecha(pokemon.fechaCaptura)}</td>
+                <td>${this.escapeHTML(pokemon.capturado)}</td>
                 <td style="text-align: center;">
-                    <button class="btn-action btn-ver"    data-id="${tarea.id}" title="Ver Detalle">👁️ Ver</button>
-                    <button class="btn-action btn-editar" data-id="${tarea.id}" title="Editar">✏️ Editar</button>
-                    <button class="btn-action btn-action-danger btn-borrar" data-id="${tarea.id}" title="Eliminar">🗑️ Borrar</button>
+                    <button class="btn-action btn-ver"    data-id="${pokemon.id}" title="Ver Detalle">👁️ Ver</button>
+                    <button class="btn-action btn-editar" data-id="${pokemon.id}" title="Editar">✏️ Editar</button>
+                    <button class="btn-action btn-action-danger btn-borrar" data-id="${pokemon.id}" title="Eliminar">🗑️ Borrar</button>
                 </td>
             </tr>
         `).join('');
@@ -73,26 +69,29 @@ export const UIService = {
     // ------------------------------------------------------------------
 
     /**
-     * [ALUMNO] Adaptar el bloque "MODO EDICIÓN" para rellenar los campos
-     * de tu entidad a partir del objeto recibido del backend.
-     *
-     * @param {Object|null} tarea - null = Crear, objeto = Editar
+     * @param {Object|null} pokemon - null = Crear, objeto = Editar
      */
-    openModalForm(tarea = null) {
+    openModalForm(pokemon = null) {
         this.elements.formEntidad.reset();
 
-        if (tarea) {
+        const inputFecha = document.getElementById('pokemon-fecha-captura');
+
+        if (pokemon) {
             // MODO EDICIÓN: rellenar cada input con los datos del registro
-            this.elements.modalFormTitulo.textContent = `Editar tarea #${tarea.id}`;
-            document.getElementById('tarea-id').value     = tarea.id;
-            // [ALUMNO] Rellenar aquí el resto de campos:
-            document.getElementById('tarea-titulo').value  = tarea.titulo || '';
-            document.getElementById('tarea-descripcion').value  = tarea.descripcion || '';
-            document.getElementById('tarea-fecha-vencimiento').value = tarea.fechaVencimiento || '';
+            this.elements.modalFormTitulo.textContent = `Editar pokemon #${pokemon.id}`;
+            document.getElementById('pokemon-id').value             = pokemon.id;
+            document.getElementById('pokemon-numero-pokedex').value = pokemon.numeroPokedex ?? '';
+            document.getElementById('pokemon-nombre').value         = pokemon.nombre || '';
+            document.getElementById('pokemon-tipo1').value          = pokemon.tipo1 || '';
+            document.getElementById('pokemon-tipo2').value          = pokemon.tipo2 || 'NINGUNO';
+            document.getElementById('pokemon-capturado').value      = pokemon.capturado || 'POKEBALL';
+            inputFecha.value    = pokemon.fechaCaptura || '';
+            inputFecha.disabled = true;   // No se permite modificar la fecha de captura
         } else {
-            // MODO CREACIÓN: limpiar el campo oculto de ID
-            this.elements.modalFormTitulo.textContent = 'Nueva tarea';
-			//document.getElementById('tarea-id').value     = '';
+            // MODO CREACIÓN: el input oculto NO se limpia con reset(), hay que vaciarlo a mano
+            this.elements.modalFormTitulo.textContent = 'Capturar pokemon';
+            document.getElementById('pokemon-id').value = '';
+            inputFecha.disabled = false;
         }
 
         this.elements.modalForm.classList.remove('hidden');
@@ -106,36 +105,36 @@ export const UIService = {
     // MODAL DETALLE (Ver)
     // ------------------------------------------------------------------
 
-    /**
-     * [ALUMNO] Adaptar el innerHTML para mostrar los campos de tu entidad.
-     * Usar el patrón detail-item / detail-label / detail-value.
-     */
-    openModalDetalle(tarea) {
+    openModalDetalle(pokemon) {
         this.elements.detalleContent.innerHTML = `
             <div class="detail-item">
                 <div class="detail-label">ID</div>
-                <div class="detail-value"><strong>#${tarea.id}</strong></div>
+                <div class="detail-value"><strong>#${pokemon.id}</strong></div>
             </div>
             <div class="detail-item">
-                <div class="detail-label">Título</div>
-                <div class="detail-value">${tarea.titulo}</div>
+                <div class="detail-label">Nº Pokédex</div>
+                <div class="detail-value">${pokemon.numeroPokedex}</div>
             </div>
             <div class="detail-item">
-                <div class="detail-label">Descripción</div>
-                <div class="detail-value">${tarea.descripcion || 'Sin datos.'}</div>
+                <div class="detail-label">Nombre</div>
+                <div class="detail-value">${this.escapeHTML(pokemon.nombre)}</div>
             </div>
-			<div class="detail-item">
-			    <div class="detail-label">Fecha creación</div>
-			    <div class="detail-value">${tarea.fechaCreacion || 'Sin datos.'}</div>
-			</div>
-			<div class="detail-item">
-			    <div class="detail-label">Fecha vencimiento</div>
-			    <div class="detail-value">${tarea.fechaVencimiento || 'Sin datos.'}</div>
-			</div>
-			<div class="detail-item">
-			    <div class="detail-label">Estado</div>
-			    <div class="detail-value">${tarea.estado}</div>
-			</div>
+            <div class="detail-item">
+                <div class="detail-label">Tipo 1</div>
+                <div class="detail-value">${this.escapeHTML(pokemon.tipo1)}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Tipo 2</div>
+                <div class="detail-value">${this.escapeHTML(this.formatTipo2(pokemon.tipo2))}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Fecha de captura</div>
+                <div class="detail-value">${this.formatFecha(pokemon.fechaCaptura)}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Capturado con</div>
+                <div class="detail-value">${this.escapeHTML(pokemon.capturado)}</div>
+            </div>
         `;
         this.elements.modalDetalle.classList.remove('hidden');
     },
@@ -166,11 +165,23 @@ export const UIService = {
     },
 
     // ------------------------------------------------------------------
-    // UTILIDAD
+    // UTILIDADES
     // ------------------------------------------------------------------
 
+    /** tipo2 NINGUNO se muestra como un guion */
+    formatTipo2(tipo2) {
+        return (!tipo2 || tipo2 === 'NINGUNO') ? '—' : tipo2;
+    },
+
+    /** 2024-03-21 → 21/03/2024 */
+    formatFecha(fecha) {
+        if (!fecha) return 'Sin datos.';
+        const [anio, mes, dia] = String(fecha).split('-');
+        return `${dia}/${mes}/${anio}`;
+    },
+
     escapeHTML(str) {
-        if (!str) return '';
+        if (str === null || str === undefined) return '';
         return String(str)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')

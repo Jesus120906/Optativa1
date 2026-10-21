@@ -1,12 +1,6 @@
 /**
  * Controlador Principal de la Aplicación (js/main.js)
- * PLANTILLA BASE EN BLANCO PARA EL ALUMNO
- *
- * Instrucciones para el alumno:
- * 1. En handleGuardar() construye el payload con los IDs del formulario
- * 2. En el filtro del buscador, ajusta los campos por los que quieres filtrar
- * 3. Si el service impide enviar algún campo (estado, fechaCreacion...), no lo incluyas en el payload
- * 4. Recuerda: en PUT el campo 'id' del body DEBE coincidir con el id de la URL
+ * Adaptado a la entidad Pokemon.
  */
 
 import { ApiService } from './api.js';
@@ -39,6 +33,7 @@ async function cargarDatos() {
         UIService.renderTabla(datosCache);
     } catch (error) {
         console.error('Error al cargar datos:', error);
+        UIService.renderTabla([]);
         UIService.showToast(error.message, 'error');
     }
 }
@@ -71,16 +66,22 @@ function setupEventListeners() {
         await handleGuardar();
     });
 
-    // 6. Buscador local en tiempo real
+    // 6. Buscador local en tiempo real (nombre, nº de pokédex, tipos y ball)
     document.getElementById('input-buscar').addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
         if (!query) {
             UIService.renderTabla(datosCache);
             return;
         }
-        // [ALUMNO] Ajusta los campos por los que quieres filtrar
+        const contiene = (valor) => valor !== null && valor !== undefined
+            && String(valor).toLowerCase().includes(query);
+
         const filtrados = datosCache.filter(item =>
-            (item.campo1 && item.campo1.toLowerCase().includes(query))
+            contiene(item.nombre) ||
+            contiene(item.numeroPokedex) ||
+            contiene(item.tipo1) ||
+            contiene(item.tipo2) ||
+            contiene(item.capturado)
         );
         UIService.renderTabla(filtrados);
     });
@@ -114,45 +115,46 @@ function setupEventListeners() {
 
 /**
  * GUARDAR (POST si no hay id, PUT si hay id)
- * [ALUMNO] Construir el payload con los valores de los inputs del formulario
  */
 async function handleGuardar() {
-    const id = document.getElementById('tarea-id').value;
+    const id = document.getElementById('pokemon-id').value;
 
-    // [ALUMNO] Leer los valores de los inputs del modal
-    const titulo = document.getElementById('tarea-titulo').value.trim();
-    const descripcion = document.getElementById('tarea-descripcion').value.trim();
-    const fechaVencimiento  = document.getElementById('tarea-fecha-vencimiento').value;
+    const numeroPokedex = parseInt(document.getElementById('pokemon-numero-pokedex').value, 10);
+    const nombre        = document.getElementById('pokemon-nombre').value.trim();
+    const tipo1         = document.getElementById('pokemon-tipo1').value;
+    const tipo2         = document.getElementById('pokemon-tipo2').value;
+    const capturado     = document.getElementById('pokemon-capturado').value;
+    const fechaCaptura  = document.getElementById('pokemon-fecha-captura').value;
 
     try {
         if (id) {
-            // MODO EDICIÓN: PUT /entidad/{id}
-            // ⚠️ El campo 'id' del body DEBE coincidir con el id de la URL
-            // ⚠️ No incluir campos que el service no permita modificar
+            // MODO EDICIÓN: PUT /pokemon/{id}
+            // ⚠️ El 'id' del body debe coincidir con el de la URL.
+            // ⚠️ La fecha de captura no se puede modificar: se reenvía la original (el input está deshabilitado).
             const payloadUpdate = {
-                id: parseInt(id),
-                // [ALUMNO] añadir campos editables:
-                titulo: titulo,
-                descripcion: descripcion,
-                fechaVencimiento: fechaVencimiento,
-				fechaCreacion: null,
-				estado: null
+                id: parseInt(id, 10),
+                numeroPokedex: numeroPokedex,
+                nombre: nombre,
+                tipo1: tipo1,
+                tipo2: tipo2,
+                capturado: capturado,
+                fechaCaptura: fechaCaptura || null
             };
             await ApiService.update(id, payloadUpdate);
-            UIService.showToast(`Tarea #${id} actualizado correctamente.`, 'success');
+            UIService.showToast(`Pokemon #${id} actualizado correctamente.`, 'success');
         } else {
-            // MODO CREACIÓN: POST /entidad
-            // ⚠️ No incluir campos que el service asigne automáticamente (estado, fechaCreacion...)
+            // MODO CREACIÓN: POST /pokemon
+            // Si no se indica fecha, el backend pone la de hoy.
             const payloadCreate = {
-                // [ALUMNO] añadir campos:
-				titulo: titulo,
-				descripcion: descripcion,
-				fechaVencimiento: fechaVencimiento,
-				fechaCreacion: null,
-				estado: null
+                numeroPokedex: numeroPokedex,
+                nombre: nombre,
+                tipo1: tipo1,
+                tipo2: tipo2,
+                capturado: capturado,
+                fechaCaptura: fechaCaptura || null
             };
             const nuevo = await ApiService.create(payloadCreate);
-            UIService.showToast(`Tarea #${nuevo.id} creada correctamente.`, 'success');
+            UIService.showToast(`Pokemon #${nuevo.id} capturado correctamente.`, 'success');
         }
 
         UIService.closeModalForm();
@@ -194,11 +196,11 @@ async function handleEditar(id) {
  * BORRAR → pide confirmación y llama a DELETE
  */
 async function handleBorrar(id) {
-    if (!confirm(`¿Estás seguro de que deseas eliminar el registro #${id}?`)) return;
+    if (!confirm(`¿Estás seguro de que deseas eliminar el pokemon #${id}?`)) return;
 
     try {
         await ApiService.delete(id);
-        UIService.showToast(`Registro #${id} eliminado correctamente.`, 'success');
+        UIService.showToast(`Pokemon #${id} eliminado correctamente.`, 'success');
         await cargarDatos();
     } catch (error) {
         console.error('Error al eliminar:', error);

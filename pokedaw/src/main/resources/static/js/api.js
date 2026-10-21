@@ -1,22 +1,45 @@
 /**
  * Módulo de Integración API REST (js/api.js)
- * PLANTILLA BASE EN BLANCO PARA EL ALUMNO
  *
- * Instrucciones:
- * 1. Cambia BASE_URL al endpoint de tu entidad (ej: '/tareas', '/productos')
- * 2. Rellena los métodos o añade nuevos según los endpoints disponibles en el backend
- * 3. Reglas importantes del service de Spring Boot:
- *    - PUT: el campo 'id' del body DEBE coincidir con el id de la URL
- *    - POST/PUT: NO envíes campos que el service prohíba (ej: estado, fechaCreacion)
+ * Endpoints de la API de pokemon:
+ *   GET    /pokemon        → listado
+ *   GET    /pokemon/{id}   → detalle
+ *   POST   /pokemon        → crear
+ *   PUT    /pokemon/{id}   → modificar (el 'id' del body debe coincidir con el de la URL)
+ *   DELETE /pokemon/{id}   → borrar
+ *
+ * Reglas del service de Spring Boot:
+ *   - Si no se envía 'capturado', se captura con POKEBALL.
+ *   - Si solo se envía tipo1 (o el mismo tipo en tipo1 y tipo2), tipo2 queda en NINGUNO.
+ *   - La fecha de captura NO se puede modificar en el PUT (debe coincidir con la guardada).
  */
 
-const BASE_URL = '/pokemon'; // Ejemplo: '/tareas'
+const BASE_URL = '/pokemon';
+
+/**
+ * El backend devuelve los errores como JSON: { status, error, message }.
+ * Esta función extrae el mensaje legible (o un texto por defecto).
+ */
+async function leerError(response, mensajePorDefecto) {
+    try {
+        const texto = await response.text();
+        if (!texto) return mensajePorDefecto;
+        try {
+            const json = JSON.parse(texto);
+            return json.message || json.error || mensajePorDefecto;
+        } catch {
+            return texto;
+        }
+    } catch {
+        return mensajePorDefecto;
+    }
+}
 
 export const ApiService = {
 
     /**
-     * GET ALL - Obtener todos los registros
-     * Endpoint: GET /entidad
+     * GET ALL - Obtener todos los pokemon
+     * Endpoint: GET /pokemon
      */
     async getAll() {
         const response = await fetch(BASE_URL);
@@ -27,22 +50,20 @@ export const ApiService = {
     },
 
     /**
-     * GET BY ID - Obtener un registro por ID
-     * Endpoint: GET /entidad/{id}
+     * GET BY ID - Obtener un pokemon por ID
+     * Endpoint: GET /pokemon/{id}
      */
     async getById(id) {
         const response = await fetch(`${BASE_URL}/${id}`);
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || `No se encontró el registro #${id}`);
+            throw new Error(await leerError(response, `No se encontró el pokemon #${id}`));
         }
         return await response.json();
     },
 
     /**
-     * POST - Crear un nuevo registro
-     * Endpoint: POST /entidad
-     * ⚠️ No incluir en data los campos que el service no permita (estado, fechaCreacion, etc.)
+     * POST - Capturar (crear) un pokemon
+     * Endpoint: POST /pokemon
      */
     async create(data) {
         const response = await fetch(BASE_URL, {
@@ -51,17 +72,15 @@ export const ApiService = {
             body: JSON.stringify(data)
         });
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || 'Error al crear el registro');
+            throw new Error(await leerError(response, 'Error al crear el pokemon'));
         }
         return await response.json();
     },
 
     /**
-     * PUT - Actualizar un registro existente
-     * Endpoint: PUT /entidad/{id}
+     * PUT - Modificar un pokemon existente
+     * Endpoint: PUT /pokemon/{id}
      * ⚠️ El campo 'id' del body DEBE coincidir con el id de la URL.
-     * ⚠️ No incluir en data los campos que el service no permita.
      */
     async update(id, data) {
         const response = await fetch(`${BASE_URL}/${id}`, {
@@ -70,27 +89,22 @@ export const ApiService = {
             body: JSON.stringify(data)
         });
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || `Error al actualizar el registro #${id}`);
+            throw new Error(await leerError(response, `Error al actualizar el pokemon #${id}`));
         }
         return await response.json();
     },
 
     /**
-     * DELETE - Borrar un registro por ID
-     * Endpoint: DELETE /entidad/{id}
+     * DELETE - Borrar (liberar) un pokemon por ID
+     * Endpoint: DELETE /pokemon/{id}
      */
     async delete(id) {
         const response = await fetch(`${BASE_URL}/${id}`, {
             method: 'DELETE'
         });
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || `Error al eliminar el registro #${id}`);
+            throw new Error(await leerError(response, `Error al eliminar el pokemon #${id}`));
         }
         return true;
     }
-
-    // [ALUMNO] Añadir aquí métodos adicionales si son necesarios
-    // Ejemplo: endpoints de acción (/tareas/{id}/iniciar, etc.)
 };
