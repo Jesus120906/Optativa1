@@ -5,14 +5,21 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.daw.persistence.entities.PokemonEntity;
-import com.daw.persistence.entities.enums.Tipo;
+import com.daw.persistence.entities.TareaEntity;
+import com.daw.persistence.entities.enums.Estado;
 
-public interface PokemonRepository extends JpaRepository<PokemonEntity, Long> {
+public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
+	
+	// SELECT * FROM tarea WHERE estado = "PENDIENTE"
+	List<TareaEntity> findByEstado(Estado estado);
+	
+	// SELECT * FROM tarea WHERE fecha_vencimiento < NOW()
+	List<TareaEntity> findByFechaVencimientoBefore(LocalDate fecha);
+	
+	// SELECT * FROM tarea WHERE fecha_vencimiento > NOW()
+	List<TareaEntity> findByFechaVencimientoAfter(LocalDate fecha);
+	
+	// SELECT * FROM tarea WHERE titulo LIKE %parametro%;
+	List<TareaEntity> findByTituloContaining(String cadena);
 
-	List<PokemonEntity> findByNumeroPokedex(int numeroPokedex);
-
-	List<PokemonEntity> findByFechaCapturaBetween(LocalDate inicio, LocalDate fin);
-
-	List<PokemonEntity> findByTipo1OrTipo2(Tipo tipo1, Tipo tipo2);
 }
