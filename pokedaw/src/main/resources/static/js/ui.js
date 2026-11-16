@@ -46,15 +46,18 @@ export const UIService = {
         if (this.elements.emptyState) this.elements.emptyState.classList.add('hidden');
         if (this.elements.statTotal)  this.elements.statTotal.textContent = items.length;
 
+		/*
+		*Aquí cambiamos 
+		*/
         this.elements.tbody.innerHTML = items.map(pokemon => `
             <tr>
                 <td><strong>#${pokemon.id}</strong></td>
                 <td>${pokemon.numeroPokedex}</td>
-                <td>${this.escapeHTML(pokemon.nombre)}</td>
-                <td>${this.escapeHTML(pokemon.tipo1)}</td>
-                <td>${this.escapeHTML(this.formatTipo2(pokemon.tipo2))}</td>
-                <td>${this.formatFecha(pokemon.fechaCaptura)}</td>
-                <td>${this.escapeHTML(pokemon.capturado)}</td>
+                <td>${pokemon.nombre}</td>
+                <td>${pokemon.tipo1}</td>
+                <td>${pokemon.tipo2}</td>
+                <td>${pokemon.fechaCaptura}</td>
+                <td>${pokemon.capturado}</td>
                 <td style="text-align: center;">
                     <button class="btn-action btn-ver"    data-id="${pokemon.id}" title="Ver Detalle">👁️ Ver</button>
                     <button class="btn-action btn-editar" data-id="${pokemon.id}" title="Editar">✏️ Editar</button>

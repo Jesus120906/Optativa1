@@ -57,7 +57,8 @@ export const UIService = {
                 <td><strong>#${tarea.id}</strong></td>
                 <td>${this.escapeHTML(tarea.titulo)}</td>
 				<td>${tarea.fechaCreacion}</td>
-				<td>${tarea.fechaVencimiento}</td>
+				<td>${tarea.prioridad}</td>
+				<td>${tarea.horasEstimadas}</td>
 				<td>${tarea.estado}</td>
                 <td style="text-align: center;">
                     <button class="btn-action btn-ver"    data-id="${tarea.id}" title="Ver Detalle">👁️ Ver</button>
@@ -87,8 +88,7 @@ export const UIService = {
             document.getElementById('tarea-id').value     = tarea.id;
             // [ALUMNO] Rellenar aquí el resto de campos:
             document.getElementById('tarea-titulo').value  = tarea.titulo || '';
-            document.getElementById('tarea-descripcion').value  = tarea.descripcion || '';
-            document.getElementById('tarea-fecha-vencimiento').value = tarea.fechaVencimiento || '';
+            document.getElementById('tarea-horas-estimadas').value = tarea.horasEstimadas || '';
         } else {
             // MODO CREACIÓN: limpiar el campo oculto de ID
             this.elements.modalFormTitulo.textContent = 'Nueva tarea';
@@ -122,7 +122,7 @@ export const UIService = {
             </div>
             <div class="detail-item">
                 <div class="detail-label">Descripción</div>
-                <div class="detail-value">${tarea.descripcion || 'Sin datos.'}</div>
+                <div class="detail-value">${tarea.prioridad || 'Sin datos.'}</div>
             </div>
 			<div class="detail-item">
 			    <div class="detail-label">Fecha creación</div>
@@ -130,7 +130,7 @@ export const UIService = {
 			</div>
 			<div class="detail-item">
 			    <div class="detail-label">Fecha vencimiento</div>
-			    <div class="detail-value">${tarea.fechaVencimiento || 'Sin datos.'}</div>
+			    <div class="detail-value">${tarea.horasEstimadas || 'Sin datos.'}</div>
 			</div>
 			<div class="detail-item">
 			    <div class="detail-label">Estado</div>

@@ -2,8 +2,8 @@ package com.daw.persistence.entities;
 
 import java.time.LocalDate;
 
-import com.daw.persistence.entities.enums.Capturado;
-import com.daw.persistence.entities.enums.Tipo;
+import com.daw.persistence.entities.enums.Estado;
+import com.daw.persistence.entities.enums.Prioridad;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,32 +18,27 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "pokemon")
+@Table(name = "tarea")
 @Getter
 @Setter
 @NoArgsConstructor
-public class PokemonEntity {
-
+public class TareaEntity {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-
-	@Column(name = "numero_pokedex")
-	private int numeroPokedex;
-
-	@Column(length = 30)
-	private String nombre;
-
+	private String titulo;
+	private int horasEstimadas;
+	
+	
+	@Column(name = "fecha_creacion")
+	private LocalDate fechaCreacion;
+	
 	@Enumerated(EnumType.STRING)
-	private Tipo tipo1;
-
+	private Estado estado;
+	
 	@Enumerated(EnumType.STRING)
-	private Tipo tipo2;
-
-	@Column(name = "fecha_captura")
-	private LocalDate fechaCaptura;
-
-	@Enumerated(EnumType.STRING)
-	private Capturado capturado;
-
+	private Prioridad prioridad;
+	
+	
 }

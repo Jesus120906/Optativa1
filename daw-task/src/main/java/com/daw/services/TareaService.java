@@ -38,14 +38,17 @@ public class TareaService {
 		if(tareaEntity.getEstado() != null) {
 			throw new TareaException("El estado no se puede modificar. ");
 		}
-		if(tareaEntity.getFechaVencimiento().isBefore(LocalDate.now())) {
-			throw new TareaException("La fecha de vencimiento debe ser posterior a la fecha de creación.");
+		if(tareaEntity.getHorasEstimadas() <= 0) {
+			throw new TareaException("Las hora extimada tiene que ser mayor a 0.");
 		}
+		
 		
 		// La tarea debe llevar un id que no existe
 		tareaEntity.setId(0L);
 		tareaEntity.setEstado(Estado.PENDIENTE);
-		tareaEntity.setFechaCreacion(LocalDate.now());		
+		tareaEntity.setFechaCreacion(LocalDate.now());
+		tareaEntity.setHorasEstimadas(1);
+		
 		
 		return this.tareaRepository.save(tareaEntity);
 	}
@@ -66,13 +69,10 @@ public class TareaService {
 		
 		TareaEntity tareaBD = this.findById(idTarea);
 		
-		if(tareaEntity.getFechaVencimiento().isBefore(LocalDate.now())) {
-			throw new TareaException("La fecha de vencimiento debe ser posterior a la fecha de creación.");
-		}
 		
 		tareaBD.setTitulo(tareaEntity.getTitulo());
-		tareaBD.setDescripcion(tareaEntity.getDescripcion());
-		tareaBD.setFechaVencimiento(tareaEntity.getFechaVencimiento());
+		tareaBD.setPrioridad(tareaEntity.getPrioridad());
+		tareaBD.setHorasEstimadas(tareaEntity.getHorasEstimadas());
 		
 		return this.tareaRepository.save(tareaBD);
 	}
@@ -98,39 +98,34 @@ public class TareaService {
 		return this.tareaRepository.save(tarea);
 	}
 	
-	public List<TareaEntity> getVencidas(){
-		return this.tareaRepository.findByFechaVencimientoBefore(LocalDate.now());
+	
+	
+	public TareaEntity revisar(long idTarea) {
+		//Aquí traigo la tarea de la BD y compruebo que el ID exista
+		TareaEntity tarea = this.findById(idTarea);
+		
+		if(!tarea.getEstado().equals(Estado.EN_PROGRESO)) {
+			throw new TareaException("No se puede iniciar una tarea en progreso o completada");
+		}
+				
+		
+		tarea.setEstado(Estado.EN_REVISION);
+		return this.tareaRepository.save(tarea);
 	}
+	
 	
 	public TareaEntity completar(long idTarea) {
-		TareaEntity tarea = tareaRepository.findById(idTarea)
-				.orElseThrow(() -> new TareaNotFoundException("No se encontró ninguna tarea con ID "+ idTarea));
+		//Aquí traigo la tarea de la BD y compruebo que el ID exista
+		TareaEntity tarea = this.findById(idTarea);
+		
+		if(!tarea.getEstado().equals(Estado.EN_REVISION)) {
+			throw new TareaException("No se puede iniciar una tarea en progreso o completada");
+		}
+				
 		
 		tarea.setEstado(Estado.COMPLETADA);
-		
-		return tareaRepository.save(tarea);
+		return this.tareaRepository.save(tarea);
 	}
-	
-	public List<TareaEntity> obtenerpendientes(){
-		return tareaRepository.findByEstado(Estado.PENDIENTE);
-	}
-	
-	public List<TareaEntity> obtenerenproceso(){
-		return tareaRepository.findByEstado(Estado.EN_PROGRESO);
-	}
-	
-	public List<TareaEntity> obtenervencidas(){
-		return tareaRepository.findByFechaVencimientoFalse();
-	}
-	 
-	public List<TareaEntity> obtenernovencidas(){
-		return tareaRepository.findByFechaVencimientoFalse();
-	}
-	
-	public List<TareaEntity> titulo(){
-		return tareaRepository.findAll();
-	}
-	
 	
 	
 }

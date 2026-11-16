@@ -57,8 +57,9 @@
                             <th style="width: 60px;">ID</th>
                             <th>Titulo</th>
                             <th>Creada</th>
-                            <th>Vencimiento</th>
+                            <th>Horas Estimadas</th>
                             <th>Estado</th>
+                            <th>Prioridad</th>
                             <th style="width: 140px; text-align: center;">Acciones</th>
                         </tr>
                     </thead>
@@ -106,16 +107,21 @@
 
                     <!-- TEXTO LARGO -->
                     <div class="form-group">
-                        <label for="tarea-descripcion">Descripción</label>
-                        <textarea id="tarea-descripcion" rows="3" placeholder="Ingrese descripción..."></textarea>
+                        <label for="tarea-descripcion">Prioridad</label>
+                            <select id="campo-select">
+                                <option value="OPCION_1">BAJA</option>
+                                <option value="OPCION_2">MEDIA</option>
+                                <option value="OPCION_3">ALTA</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-row">
 
                         <!-- FECHA -->
                         <div class="form-group">
-                            <label for="tarea-fecha-vencimiento">Fecha de vencimiento<span class="req">*</span></label>
-                            <input type="date" id="tarea-fecha-vencimiento" required>
+                            <label for="tarea-fecha-vencimiento">Horas Estimadas<span class="req">*</span></label>
+                            <input type="number" id="tarea-horas-estimadas" step="0.01" min="0">
                         </div>
 
                     </div>

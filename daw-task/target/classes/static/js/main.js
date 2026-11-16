@@ -133,8 +133,8 @@ async function handleGuardar() {
                 id: parseInt(id),
                 // [ALUMNO] añadir campos editables:
                 titulo: titulo,
-                descripcion: descripcion,
-                fechaVencimiento: fechaVencimiento,
+                prioridad: null,
+                horasEstimadas: horasEstimadas,
 				fechaCreacion: null,
 				estado: null
             };
@@ -146,8 +146,8 @@ async function handleGuardar() {
             const payloadCreate = {
                 // [ALUMNO] añadir campos:
 				titulo: titulo,
-				descripcion: descripcion,
-				fechaVencimiento: fechaVencimiento,
+				prioridad: null,
+				horasEstimadas: horasEstimadas,
 				fechaCreacion: null,
 				estado: null
             };
