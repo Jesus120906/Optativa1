@@ -13,6 +13,11 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
 	// SELECT * FROM tarea WHERE estado = "PENDIENTE"
 	List<TareaEntity> findByEstado(Estado estado);
 	
+	// SELECT * FROM tarea WHERE fecha_vencimiento < NOW()
+	List<TareaEntity> findByFechaVencimientoBefore(LocalDate fecha);
+	
+	// SELECT * FROM tarea WHERE fecha_vencimiento > NOW()
+	List<TareaEntity> findByFechaVencimientoAfter(LocalDate fecha);
 	
 	// SELECT * FROM tarea WHERE titulo LIKE %parametro%;
 	List<TareaEntity> findByTituloContaining(String cadena);
