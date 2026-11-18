@@ -32,7 +32,7 @@ public class ClienteController {
 	}
 
 	@GetMapping("/{idCliente}")
-	public ResponseEntity<?> findById(@PathVariable long idCliente) {
+	public ResponseEntity<ClienteEntity> findById(@PathVariable long idCliente) {
 		return ResponseEntity.ok(this.clienteService.findById(idCliente));
 	}
 

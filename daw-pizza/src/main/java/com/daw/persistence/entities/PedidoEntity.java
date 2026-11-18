@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 @Entity
@@ -40,7 +41,8 @@ public class PedidoEntity {
 	@Enumerated(EnumType.STRING)
 	private MetodoPedido metodo;
 	
-    @Column(nullable = false, length = 200)
+	@Size(max = 200, message = "Las notas no pueden superar los 200 caracteres")
+    @Column(length = 200)
     private String notas;
     
     @OneToMany(mappedBy = "pedido",
