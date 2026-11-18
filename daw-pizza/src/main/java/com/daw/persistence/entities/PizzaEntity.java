@@ -1,5 +1,6 @@
 package com.daw.persistence.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,11 +18,23 @@ public class PizzaEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(nullable = false, length = 30)
 	private String nombre;
+	
+	@Column(nullable = false, length = 150)
 	private String descripcion;
+
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,2)")
     private Double precio;
+    
+    @Column(nullable = false)
     private Boolean vegetariana;
+    
+    @Column(nullable = false)
     private Boolean vegana;
+    
+    @Column(nullable = false)
     private Boolean disponible;
     
 	public PizzaEntity() {
